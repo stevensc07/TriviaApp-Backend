@@ -1,30 +1,27 @@
-import Joi from "joi";
 import { response } from "./utils/response.js";
 import User from "../models/user.js";
-
-const user_regex = Joi.object({
-  name: Joi.string().min(4).max(16).required(),
-  nickname: Joi.string().min(4).max(16).required(),
-  cel: Joi.string().min(10).max(15).required(),
-  password: Joi.string().min(6).max(256).required(),
-  confirm_password: Joi.ref("password"),
-  email: Joi.string().min(6).max(56).email(),
-});
+import bcrypt from "bcrypt";
+import { login_regex, user_regex } from "./validations/auth.validation.js";
 
 const register = async (user_request) => {
   const { error } = user_regex.validate(user_request);
-
   if (error) return response(false, error.details[0].message);
 
   const is_nickname = await User.findOne({ nickname: user_request.nickname });
-
   if (is_nickname) return response(false, "nickname already exist");
 
   const is_cel = await User.findOne({ cel: user_request.cel });
-
   if (is_cel) return response(false, "celular already exist");
 
   delete user_request.confirm_password;
+
+  const salt = await bcrypt.genSalt(5);
+  const hash = await bcrypt.hash(user_request.password, salt);
+
+  user_request = {
+    ...user_request,
+    password: hash,
+  };
 
   const user_db = new User(user_request);
 
@@ -33,6 +30,20 @@ const register = async (user_request) => {
   return response(true, "user created", new_user);
 };
 
-const login = () => {};
+const login = async (login_request) => {
+  const { error } = login_regex.validate(login_request);
+  if (error) return response(false, error.details[0].message);
+
+  const user_db = await User.findOne({ nickname: login_request.nickname });
+  if (!user_db) return response(false, "User don't exist");
+
+  const valid_password = await bcrypt.compare(
+    login_request.password,
+    user_db.password
+  );
+  if (!valid_password) return response(false, "Incorrect password");
+
+  return response(true, "Login success", user_db);
+};
 
 export { register, login };

@@ -1,4 +1,7 @@
-import { register as register_service } from "../services/auth.service.js";
+import {
+  register as register_service,
+  login as login_service,
+} from "../services/auth.service.js";
 import { constants } from "../services/utils/constants.js";
 
 const { status, message } = constants.response;
@@ -8,6 +11,9 @@ const register = async (req, res) => {
   res.status(status.OK).json(user_db);
 };
 
-const login = (req, res) => {};
+const login = async (req, res) => {
+  const user_db = await login_service(req.body);
+  res.status(status.OK).json(user_db);
+};
 
 export { register, login };
