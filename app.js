@@ -13,8 +13,6 @@ await connection();
 
 app.use("/api", router);
 
-const { status } = constants.response;
-
 app.get("*", not_found);
 
 app.listen(port, () => console.log(`Server on port: ${port}`));
