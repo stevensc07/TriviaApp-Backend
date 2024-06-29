@@ -1,23 +1,20 @@
 import express from "express";
-import mongoose from "mongoose";
+import connection from "./database/db.js";
+import router from "./routes/main.route.js";
 
 const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
 
-const userdb = process.env.USERDB;
-const passdb = process.env.PASSDB;
-const hostdb = process.env.HOSTDB;
-const namedb = process.env.NAMEDB;
+await connection();
 
-const url = `mongodb+srv://${userdb}:${passdb}@${hostdb}/${namedb}`;
+app.use("/api", router);
 
-try {
-  await mongoose.connect(url);
-  console.log("Database connected");
-} catch (error) {
-  console.log("Error Database", error);
-}
+app.get("*", (req, res) => {
+  res.status(404).json({
+    msg: "not found",
+  });
+});
 
 app.listen(port, () => console.log(`Server on port: ${port}`));
