@@ -22,7 +22,8 @@ Welcome to the Trivia Back repository! This project is designed to provide a bac
 1. Clone the repository:
    ```sh
    git clone https://github.com/stevensc07/TriviaApp-Backend
-   cd trivia-back
+   cd TriviaApp-Backend
+
 
 2. Install dependencies:
    ```sh
