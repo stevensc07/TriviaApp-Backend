@@ -66,4 +66,4 @@ Contributions are welcome! Please fork the repository and create a pull request.
 This project is licensed under the MIT License.
 
 ## Contact
-For more information, feel free to reach out at [jdteheran@uninorte.edu.co].
+For more information, feel free to reach out at [stevensc@uninorte.edu.co].
