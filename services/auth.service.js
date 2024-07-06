@@ -2,6 +2,7 @@ import { response } from "./utils/response.js";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import { login_regex, user_regex } from "./validations/auth.validation.js";
+import jwt from "jsonwebtoken";
 
 const register = async (user_request) => {
   const { error } = user_regex.validate(user_request);
@@ -43,7 +44,17 @@ const login = async (login_request) => {
   );
   if (!valid_password) return response(false, "Incorrect password");
 
-  return response(true, "Login success", user_db);
+  const payload = {
+    id: user_db._id,
+    name: user_db.name,
+    cel: user_db.cel,
+  };
+
+  const sign_options = { expiresIn: "3600s" };
+
+  const token = jwt.sign(payload, process.env.TOKEN, sign_options);
+
+  return response(true, "Login success", token);
 };
 
 export { register, login };
